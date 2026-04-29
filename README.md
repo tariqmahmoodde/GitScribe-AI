@@ -1,98 +1,102 @@
-# GitScribe AI [![GitHub Actions Workflow](https://img.shields.io/github/actions/workflow/status/your-username/your-repo/sample-workflow.yml?label=build)](https://github.com/your-username/your-repo/actions)
-
-Automatically generate a professional, human-readable README.md for your repository using the power of Groq's Qwen large language models. This GitHub Action scans your codebase and produces documentation that reflects your project's structure and purpose.
-
----
-
-## Project Overview
-
-GitScribe AI solves the problem of manual README maintenance by:
-- Analyzing source code and documentation files
-- Generating structured documentation with technical accuracy
-- Automatically updating the README.md file in your repository
-- Using state-of-the-art AI models for natural language output
-
-The action is designed to run as part of your CI/CD pipeline, ensuring your documentation stays up-to-date with your codebase.
+# GitScribe AI 📘  
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/your-username/gitscribe.yml?branch=main)](https://github.com/your-username/actions/actions)  
+Automatically generate professional README.md files using AI-powered documentation  
 
 ---
 
-## Tech Stack
+## Project Overview  
+GitScribe AI is a GitHub Action that **automatically scans repositories** and generates **human-readable README.md files** using the **Groq API** with Qwen models. It eliminates the need for manual documentation by analyzing code structure, dependencies, and workflow configurations to create structured, technical documentation.  
+
+**Key Features**  
+- ✅ AI-generated technical documentation  
+- 🔄 Automated workflow for continuous updates  
+- 🚀 High-performance Groq API integration  
+- 🧠 Supports advanced Qwen models (qwen3-32b recommended)  
+- 🔄 Auto-commits updates to your repository  
+
+---
+
+## Tech Stack  
 
 | Technology       | Role                                                                 |
 |------------------|----------------------------------------------------------------------|
-| **Python 3.12**  | Primary implementation language                                      |
-| **GitHub Actions** | Automation orchestration and workflow execution                   |
-| **Groq API**     | AI model inference (Qwen series for code/docs generation)           |
-| **Docker**       | Containerized action runtime environment                           |
-| **PyGithub**     | GitHub API integration for repository operations                   |
-| **Git**          | Version control integration for README commits                    |
+| **Python**       | Core scripting language for documentation generation               |
+| **Docker**       | Containerization for consistent execution environment              |
+| **GitHub Actions**| Automation workflow orchestration                                  |
+| **Groq API**     | High-speed AI inference with Qwen large language models            |
+| **PyGithub**     | GitHub API integration for repository operations                 |
+| **Mermaid.js**   | Diagram generation for architecture visualization                  |
+| **YAML**         | Workflow configuration and metadata storage                        |
 
 ---
 
-## Architecture
-
+## Architecture  
 ```mermaid
 graph TD
-    A[GitHub Push/Dispatch] --> B[Workflow Trigger]
-    B --> C[Checkout Repository]
-    C --> D[Run GitScribe Container]
-    D --> E[Groq API Request]
-    E --> F[Generate README.md]
-    F --> G[Commit & Push to Repo]
-    D --> H[Environment Variables]
-    H --> I[GROQ_API_KEY]
-    H --> J[GITHUB_TOKEN]
+    A[GitHub Push/Dispatch Event] --> B(GitScribe Action)
+    B --> C{Groq API (Qwen Model)}
+    C --> D[Generated README.md]
+    D --> E[PyGithub Commit]
+    E --> F[GitHub Repository]
+    B --> G[Environment Variables]
+    G --> H[GROQ_API_KEY]
+    G --> I[GITHUB_TOKEN]
 ```
 
 ---
 
-## Installation & Usage
+## Installation & Usage  
 
-### Prerequisites
-1. **Groq API Key** - Get a free key from [Groq Console](https://console.groq.com)
-2. **GitHub Token** - Uses built-in `GITHUB_TOKEN` by default
+### Prerequisites  
+1. GitHub repository with codebase  
+2. [Groq API key](https://console.groq.com)  
+3. Basic GitHub Actions permissions  
 
-### Setup Steps
-1. Copy `.github/workflows/sample-workflow.yml` to `.github/workflows/gitscribe.yml` in your repo
-2. Set `GROQ_API_KEY` in your repository secrets
-3. Commit the workflow file and push to `main`
+### Setup Steps  
+1. **Add Secrets**  
+   In your repository settings → Secrets → Actions, add:  
+   ```yaml
+   GROQ_API_KEY: "your-groq-api-key"
+   ```
 
-### Workflow Configuration
-```yaml
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-jobs:
-  generate-readme:
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run GitScribe AI
-        uses: ./ # or your published action path
-        with:
-          groq_api_key: ${{ secrets.GROQ_API_KEY }}
-          model: "qwen/qwen3-32b" # for high-quality output
+2. **Configure Workflow**  
+   Create `.github/workflows/gitscribe.yml` with:  
+   ```yaml
+   name: "GitScribe AI — Generate README"
+   on: [push, workflow_dispatch]
+   jobs:
+     generate-readme:
+       uses: your-username/gitscribe-ai@v1
+       secrets:
+         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+   ```
+
+3. **Customize (Optional)**  
+   Override these parameters in your workflow:  
+   ```yaml
+   with:
+     model: "qwen/qwen2.5-coder-32b-instruct"  # Faster alternative
+     branch: "docs"                            # Target branch
+   ```
+
+4. **Trigger Workflow**  
+   Push changes to `main` or manually run from the **Actions** tab.  
+
+---
+
+## Contributing  
+1. Fork the repository  
+2. Create a feature branch: `git checkout -b feature-name`  
+3. Write code + tests  
+4. Submit a pull request with clear documentation  
+
+**Note:** For local testing, set environment variables:  
+```bash
+GROQ_API_KEY=your-key GITHUB_TOKEN=your-token python generate_docs.py
 ```
 
 ---
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Write your changes and test locally using Docker
-4. Submit a pull request with clear documentation
-
-**Note:** For local testing, set environment variables in a `.env` file:
-```env
-GROQ_API_KEY=your_key
-GITHUB_TOKEN=your_token
-```
-
----
-
-## License
-
-MIT License © 2024 GitScribe AI
-
-> This project uses the Groq API. By using this action, you agree to Groq's [Terms of Service](https://groq.com/terms-of-service).
+## License  
+MIT License © 2024 GitScribe AI  
+*Generated by GitScribe AI using Groq's Qwen3-32B model*
