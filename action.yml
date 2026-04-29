@@ -1,0 +1,63 @@
+name: "GitScribe AI"
+description: >
+  Automatically scans your repository and generates a professional,
+  human-readable README.md powered by the Groq API (Qwen model).
+
+author: "GitScribe AI"
+
+branding:
+  icon: "book-open"
+  color: "blue"
+
+# ---------------------------------------------------------------------------
+# Inputs
+# ---------------------------------------------------------------------------
+inputs:
+  groq_api_key:
+    description: "Groq API key for AI generation. Store this as a repository secret."
+    required: true
+
+  github_token:
+    description: "GitHub token used to commit the README back to the repository."
+    required: true
+    default: ${{ github.token }}
+
+  branch:
+    description: "Target branch where README.md will be committed."
+    required: false
+    default: ${{ github.ref_name }}
+
+  model:
+    description: >
+      Groq model to use for generation.
+      Recommended: qwen/qwen3-32b (high quality) or qwen/qwen2.5-coder-32b-instruct (fast).
+    required: false
+    default: "qwen/qwen3-32b"
+
+  repo_name:
+    description: >
+      Full repository name in the format owner/repo.
+      Defaults to the repository the workflow runs in.
+    required: false
+    default: ${{ github.repository }}
+
+# ---------------------------------------------------------------------------
+# Outputs
+# ---------------------------------------------------------------------------
+outputs:
+  readme_committed:
+    description: "Set to 'true' if a README.md was successfully committed."
+    value: ${{ steps.generate.outputs.readme_committed }}
+
+# ---------------------------------------------------------------------------
+# Runtime — Docker container action
+# ---------------------------------------------------------------------------
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  env:
+    GROQ_API_KEY:       ${{ inputs.groq_api_key }}
+    GITHUB_TOKEN:       ${{ inputs.github_token }}
+    INPUT_BRANCH:       ${{ inputs.branch }}
+    INPUT_MODEL:        ${{ inputs.model }}
+    INPUT_REPO_NAME:    ${{ inputs.repo_name }}

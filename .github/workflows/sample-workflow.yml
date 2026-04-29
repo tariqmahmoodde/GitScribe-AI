@@ -1,0 +1,78 @@
+# ---------------------------------------------------------------------------
+# GitScribe AI — Sample Workflow
+# ---------------------------------------------------------------------------
+# Copy this file into your project at .github/workflows/gitscribe.yml
+# and add GROQ_API_KEY to your repository secrets.
+#
+# Secrets required:
+#   GROQ_API_KEY — obtain a free key at https://console.groq.com
+#
+# The built-in GITHUB_TOKEN is provided automatically — no setup needed.
+# ---------------------------------------------------------------------------
+
+name: "GitScribe AI — Generate README"
+
+on:
+  # Run automatically whenever code is pushed to the main branch.
+  push:
+    branches:
+      - main
+      - master
+
+  # Allow manual execution from the Actions tab.
+  workflow_dispatch:
+
+  # Optional: run on a schedule (e.g., every Monday at 09:00 UTC).
+  # schedule:
+  #   - cron: "0 9 * * 1"
+
+# Prevent multiple runs from racing each other.
+concurrency:
+  group: gitscribe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-readme:
+    name: "Generate README.md"
+    runs-on: ubuntu-latest
+
+    # Grant write access so the action can commit the README back.
+    permissions:
+      contents: write
+
+    steps:
+      # ----------------------------------------------------------------
+      # 1. Check out the repository so the action can scan the files.
+      # ----------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch enough history for the commit to land cleanly.
+          fetch-depth: 1
+
+      # ----------------------------------------------------------------
+      # 2. Run GitScribe AI.
+      #
+      #    All inputs have sensible defaults — only groq_api_key is
+      #    strictly required. Override the others to customise behaviour.
+      # ----------------------------------------------------------------
+      - name: Run GitScribe AI
+        uses: ./                          # Replace with your published action path,
+                                          # e.g. your-org/gitscribe-ai@v1
+        with:
+          groq_api_key: ${{ secrets.GROQ_API_KEY }}
+
+          # github_token defaults to the built-in token — no change needed.
+          # github_token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Target branch (defaults to the branch the push landed on).
+          # branch: main
+
+          # Groq model to use. qwen/qwen3-32b gives the best output quality.
+          # For faster (but slightly lower quality) generation, try:
+          #   qwen/qwen2.5-coder-32b-instruct
+          model: "qwen/qwen3-32b"
+
+          # repo_name defaults to the current repo — only change if you need
+          # to write the README to a *different* repository.
+          # repo_name: your-org/your-repo
