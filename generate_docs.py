@@ -176,8 +176,6 @@ def generate_readme(context: str, model: str) -> str:
             ],
             temperature=0.4,
             max_tokens=4096,
-            # Disable Qwen3 chain-of-thought thinking tokens
-            extra_body={"thinking": {"type": "disabled"}},
         )
     except Exception as exc:
         log.error("Groq API call failed: %s", exc)
