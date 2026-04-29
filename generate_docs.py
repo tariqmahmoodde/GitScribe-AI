@@ -7,6 +7,7 @@ the repo using the GitHub API.
 """
 
 import os
+import re
 import sys
 import logging
 from pathlib import Path
@@ -175,14 +176,35 @@ def generate_readme(context: str, model: str) -> str:
             ],
             temperature=0.4,
             max_tokens=4096,
+            # Disable Qwen3 chain-of-thought thinking tokens
+            extra_body={"thinking": {"type": "disabled"}},
         )
     except Exception as exc:
         log.error("Groq API call failed: %s", exc)
         sys.exit(1)
 
-    readme = response.choices[0].message.content
+    raw = response.choices[0].message.content
+    readme = _strip_thinking(raw)
     log.info("README generated (%d chars).", len(readme))
     return readme
+
+
+def _strip_thinking(text: str) -> str:
+    """
+    Remove chain-of-thought blocks that some models (e.g. Qwen3) emit.
+    Handles both <think>…</think> XML tags and bare reasoning preambles
+    that end before the first Markdown heading.
+    """
+    # Remove <think>…</think> blocks (Qwen3 / DeepSeek style)
+    cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+
+    # If the model prefixed plain reasoning text before the first heading,
+    # discard everything before the first `#` character.
+    first_heading = cleaned.find("#")
+    if first_heading > 0:
+        cleaned = cleaned[first_heading:]
+
+    return cleaned.strip()
 
 
 # ---------------------------------------------------------------------------
