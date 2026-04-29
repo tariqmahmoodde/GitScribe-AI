@@ -1,97 +1,74 @@
-# GitScribe AI [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-gh--action-brightgreen?style=flat)](https://github.com/marketplace/actions/gitscribe-ai)
-
-**Automate professional README.md generation using Groq AI models**
+Automatically generate a professional, human-readable README.md for your repository using AI-powered code analysis. This GitHub Action scans your project, understands its structure, and produces documentation that reflects your codebase's purpose and architecture.
 
 ---
 
-## 📦 Project Overview
+## Project Overview
 
-GitScribe AI is a GitHub Action that automatically analyzes your repository's codebase and generates a human-readable, professional README.md using the Groq API (powered by Qwen models). This action helps maintain up-to-date documentation by:
 
-- Scanning code files and architecture
-- Generating structured documentation
-- Committing the README directly to your repo
-- Supporting multiple AI models for quality/speed tradeoffs
-
-Ideal for teams wanting to automate documentation while maintaining technical accuracy and readability.
+The action uses AI to analyze file contents, detect patterns, and produce structured documentation without requiring any special comments or annotations in your code.
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
-| Technology       | Role                                                                 |
-|------------------|----------------------------------------------------------------------|
-| **Python 3.12**  | Core runtime environment                                             |
-| **Groq API**     | AI model inference (Qwen3-32B for quality, Qwen2.5-32B for speed)  |
-| **PyGithub**     | GitHub API integration for repository operations                   |
-| **Docker**       | Containerized action for consistent execution                      |
-| **GitHub Actions**| CI/CD workflow automation for triggering documentation updates   |
+| Technology | Role |
+|------------|------|
+| **Python 3.12** | Runtime environment for the action logic |
+| **Docker** | Containerization for consistent execution |
+| **GitHub Actions** | Automation workflow orchestration |
+| **PyGithub** | GitHub API integration for repository operations |
+| **Git** | Version control integration for documentation commits |
 
 ---
 
-## 🧠 Architecture
+## Architecture
 
 ```mermaid
 graph TD
-    A[GitHub Workflow Trigger] --> B(Docker Container)
-    B --> C[Python Runtime]
-    C --> D[Codebase Analysis]
-    C --> E[Groq API Integration]
-    E --> F[AI Model Inference]
-    F --> G[README.md Generation]
-    G --> H[PyGithub Commit]
-    H --> I[Github Repository]
-    
-    classDef component fill:#2b6cb0,color:#fff;
-    classDef service fill:#4fc7d9,color:#fff;
-    
-    class B,C,D,E,F,G,H,I component
-    class A service
+    A[GitHub Actions Workflow] --> B[GitScribe Docker Container]
+    B --> C[Scan Repository Files]
+    D --> E[Commit README to Repository]
+    A --> F[GitHub Secrets]
+    G --> D
 ```
 
 ---
 
-## 🚀 Installation & Usage
+## Installation & Usage
 
-### 1. Prerequisites
-- GitHub repository with write permissions
-- [Groq API key](https://console.groq.com) (free tier available)
+1. **Create a GitHub Personal Access Token**  
+   - Generate a token with `repo` scope [here](https://github.com/settings/tokens)
 
-### 2. Setup Steps
-
-1. **Add workflow file**  
-   Create `.github/workflows/gitscribe.yml` with the provided workflow configuration
-
-2. **Set secrets**  
-   In your repository settings → Secrets → Actions:
+2. **Add Required Secrets**  
+   Add these to your repository's Secrets settings:
    ```bash
-   GROQ_API_KEY=your_api_key_here
    ```
 
-3. **Optional configuration**  
-   Customize these parameters in your workflow:
+3. **Create Workflow File**  
+   Copy `.github/workflows/sample-workflow.yml` to your repository as `.github/workflows/gitscribe.yml`
+
+4. **Configure Workflow**  
+   Optional parameters in the workflow file:
    ```yaml
-   model: "qwen/qwen2.5-coder-32b-instruct" # For faster generation
-   branch: "docs" # Target branch for README
+   branch: main # target branch for documentation commit
    ```
 
-4. **Trigger workflow**  
-   Push changes to `main` or run manually from the Actions tab
+5. **Trigger Workflow**  
+   Push changes to `main` or manually run the action from the **Actions** tab.
+
+Resulting README will be committed with a message like:  
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Test locally using `act` (GitHub Actions CLI)
-4. Submit a pull request with clear documentation
+3. Make your changes and test locally
+4. Submit a pull request with clear documentation of your changes
 
-All contributions must pass existing tests and follow PEP8 guidelines.
+All contributions are welcome! For major changes, please open an issue first to discuss what you'd like to implement.
 
 ---
 
-## 📄 License
-
-MIT License © 2024 GitScribe AI  
-See [LICENSE](LICENSE) for full details.
+## License
